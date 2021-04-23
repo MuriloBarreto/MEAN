@@ -44,11 +44,25 @@ export class ClienteService {
       email: email,
     };
     this.httpClient
-      .post<{ mensagem: string }>('http://localhost:3000/api/clientes', cliente)
+      .post<{ mensagem: string, id: string }>('http://localhost:3000/api/clientes', cliente)
       .subscribe((dados) => {
         console.log(dados.mensagem);
+        cliente.id = dados.id;
         this.clientes.push(cliente);
         this.listaClientesAtualizada.next([...this.clientes]);
       });
+  }
+
+  removerCliente (id: string): void{
+    this.httpClient.delete(`http://localhost:3000/api/clientes/${id}`).subscribe(() =>{
+      this.clientes = this.clientes.filter((cli) =>{
+        return cli.id !== id
+      });
+      this.listaClientesAtualizada.next([...this.clientes]);
+    });
+  }
+
+  getCliente(idCliente: string){
+    return{...this.clientes.find((cli) => cli.id === idCliente)};
   }
 }
