@@ -1,5 +1,6 @@
 <mat-card>
-  <form (submit)="onAdicionarCliente(clienteForm)" #clienteForm="ngForm">
+  <mat-spinner *ngIf="estaCarregando"></mat-spinner>
+  <form (submit)="onSalvarCliente(clienteForm)" *ngIf="!estaCarregando" #clienteForm="ngForm">
     <mat-form-field>
       <input required minlength="4" type="text"  matInput placeholder="nome" name="nome" [ngModel]="cliente?.nome"
         #nome="ngModel"/>
@@ -19,7 +20,7 @@
     </mat-form-field>
 
     <button color="accent" mat-raised-button>
-      Inserir Cliente
+      Salvar Cliente
     </button>
   </form>
 </mat-card>
