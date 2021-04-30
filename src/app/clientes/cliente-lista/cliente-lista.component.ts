@@ -11,9 +11,9 @@ import { ClienteService } from '../cliente.service';
 })
 export class ClienteListaComponent implements OnInit, OnDestroy {
 
-  clientes: Cliente[] = [];
+  clientes:Cliente[] = [];
   private clientesSubscription!: Subscription;
-  public estaCarregando = false;
+  public estaCarregando: boolean = false;
 
 
   constructor(public clienteService: ClienteService) { }

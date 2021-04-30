@@ -1,64 +1,106 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ClienteService } from '../cliente.service';
-import { Cliente } from '../cliente.model';
+import { mimeTypeValidator } from './mime-type.validator';
+
 @Component({
   selector: 'app-cliente-inserir',
   templateUrl: './cliente-inserir.component.html',
   styleUrls: ['./cliente-inserir.component.css'],
 })
+
 export class ClienteInserirComponent implements OnInit {
-  private modo: string = 'criar';
+  private modo = "criar";
   private idCliente: any;
   public cliente: any;
   public estaCarregando: boolean = false;
-  ngOnInit() {
+  form!: FormGroup;
+  previewImagem: string;
+
+  constructor(
+    public clienteService: ClienteService,
+    public route: ActivatedRoute
+  ) {
+
+  }
+  ngOnInit(){
+    this.form = new FormGroup({
+      nome: new FormControl (null, {
+        validators: [Validators.required, Validators.minLength(3)]
+      }),
+      fone: new FormControl (null, {
+        validators: [Validators.required]
+      }),
+      email: new FormControl (null, {
+        validators: [Validators.required, Validators.email]
+      }),
+      imagem: new FormControl (null, {
+        validators: [Validators.required],
+        asyncValidators: [mimeTypeValidator]
+      })
+    });
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
-      if (paramMap.has('idCliente')) {
-        this.modo = 'editar';
-        this.idCliente = paramMap.get('idCliente');
+      if (paramMap.has("idCliente")){
+        this.modo = "editar";
+        this.idCliente = paramMap.get("idCliente");
         this.estaCarregando = true;
-        this.cliente = this.clienteService.getCliente(this.idCliente).subscribe( dadosCli =>{
+        this.cliente = this.clienteService.getCliente(this.idCliente).subscribe( dadosCli => {
           this.estaCarregando = false;
           this.cliente = {
             id: dadosCli._id,
             nome: dadosCli.nome,
             fone: dadosCli.fone,
             email: dadosCli.email
-          }
-        })
-      } else {
-        this.modo = 'criar';
+          };
+          this.form.setValue({
+            nome: this.cliente.nome,
+            fone: this.cliente.fone,
+            email: this.cliente.email
+          })
+        });
+      }
+      else{
+        this.modo = "criar";
         this.idCliente = null;
       }
-    });
+    })
   }
-  constructor(
-    public clienteService: ClienteService,
-    public route: ActivatedRoute
-  ) {}
 
-  onSalvarCliente(form: NgForm) {
-    if (form.invalid) {
-      return;
+  onImagemSelecionada (event: Event){
+    const arquivo = (event.target as HTMLInputElement).files[0];
+    this.form.patchValue({'imagem': arquivo});
+    this.form.get('imagem').updateValueAndValidity();
+    console.log(arquivo);
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.previewImagem = reader.result as string;
     }
+    reader.readAsDataURL(arquivo);
+  }
+
+
+  onSalvarCliente() {
+     if (this.form.invalid) {
+       return;
+     }
     this.estaCarregando = true;
-    if (this.modo === 'criar') {
+    if (this.modo === "criar"){
       this.clienteService.adicionarCliente(
-        form.value.id,
-        form.value.nome,
-        form.value.fone,
-        form.value.email
+        this.form.value.id,
+        this.form.value.nome,
+        this.form.value.fone,
+        this.form.value.email
       );
     } else {
       this.clienteService.atualizarCliente(
         this.idCliente,
-        form.value.nome,
-        form.value.fone,
-        form.value.email
-      );
+        this.form.value.nome,
+        this.form.value.fone,
+        this.form.value.email
+      )
     }
-    form.resetForm();
+    //this.estaCarregando = false;
+    this.form.reset();
   }
 }
