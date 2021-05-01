@@ -1,13 +1,17 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
+require('dotenv').config();
+const path = require('path');
+const express = require('express');
 const app = express();
-const clienteRoutes = require('./rotas/clientes')
-app.use(express.json());
+const cors = require('cors');
+const mongoose = require('mongoose');
+const clienteRoutes = require('./rotas/clientes');
 app.use(cors());
-require("dotenv/config");
+app.use(express.json());
+app.use('/imagens', express.static(path.join("backend/imagens")));
 
-const Cliente = require("./models/cliente");
+
+const Cliente = require('./models/cliente');
+// const { ConsoleReporter } = require('jasmine');
 const user_db = process.env.MONGODB_USER;
 const pass_db = process.env.MONGODB_PASSWORD;
 const cluster_db = process.env.MONGODB_CLUSTER;

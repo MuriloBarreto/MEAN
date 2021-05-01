@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ClienteService } from '../cliente.service';
+import { Cliente } from '../cliente.model';
 import { mimeTypeValidator } from './mime-type.validator';
 
 @Component({
@@ -15,7 +16,7 @@ export class ClienteInserirComponent implements OnInit {
   private idCliente: any;
   public cliente: any;
   public estaCarregando: boolean = false;
-  form!: FormGroup;
+  form: FormGroup;
   previewImagem: string;
 
   constructor(
@@ -24,22 +25,23 @@ export class ClienteInserirComponent implements OnInit {
   ) {
 
   }
+
   ngOnInit(){
     this.form = new FormGroup({
-      nome: new FormControl (null, {
+      nome: new FormControl(null, {
         validators: [Validators.required, Validators.minLength(3)]
       }),
-      fone: new FormControl (null, {
+      fone: new FormControl(null, {
         validators: [Validators.required]
       }),
-      email: new FormControl (null, {
+      email: new FormControl(null, {
         validators: [Validators.required, Validators.email]
       }),
-      imagem: new FormControl (null, {
+      imagem: new FormControl(null, {
         validators: [Validators.required],
         asyncValidators: [mimeTypeValidator]
       })
-    });
+    })
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has("idCliente")){
         this.modo = "editar";
@@ -51,12 +53,14 @@ export class ClienteInserirComponent implements OnInit {
             id: dadosCli._id,
             nome: dadosCli.nome,
             fone: dadosCli.fone,
-            email: dadosCli.email
+            email: dadosCli.email,
+            imagemURL: dadosCli.imagemURL
           };
           this.form.setValue({
             nome: this.cliente.nome,
             fone: this.cliente.fone,
-            email: this.cliente.email
+            email:this.cliente.email,
+            imagem: this.cliente.imagemURL
           })
         });
       }
@@ -67,11 +71,10 @@ export class ClienteInserirComponent implements OnInit {
     })
   }
 
-  onImagemSelecionada (event: Event){
+  onImagemSelecionada(event: Event){
     const arquivo = (event.target as HTMLInputElement).files[0];
     this.form.patchValue({'imagem': arquivo});
     this.form.get('imagem').updateValueAndValidity();
-    console.log(arquivo);
     const reader = new FileReader();
     reader.onload = () => {
       this.previewImagem = reader.result as string;
@@ -79,25 +82,26 @@ export class ClienteInserirComponent implements OnInit {
     reader.readAsDataURL(arquivo);
   }
 
-
   onSalvarCliente() {
-     if (this.form.invalid) {
-       return;
-     }
+    if (this.form.invalid) {
+      return;
+    }
     this.estaCarregando = true;
     if (this.modo === "criar"){
       this.clienteService.adicionarCliente(
         this.form.value.id,
         this.form.value.nome,
         this.form.value.fone,
-        this.form.value.email
+        this.form.value.email,
+        this.form.value.imagem
       );
     } else {
       this.clienteService.atualizarCliente(
         this.idCliente,
         this.form.value.nome,
         this.form.value.fone,
-        this.form.value.email
+        this.form.value.email,
+        this.form.value.imagem
       )
     }
     //this.estaCarregando = false;

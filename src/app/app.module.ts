@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
-//substituindo template drivem forms por reactive forms
-//import { FormsModule } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms'; 
+import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -29,7 +27,6 @@ import { AppRoutingModule } from './app-routing.module';
   imports: [
     AppRoutingModule,
     BrowserModule,
-    //FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
     MatInputModule,
