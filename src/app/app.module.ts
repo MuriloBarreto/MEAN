@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -15,14 +15,19 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { ClienteService } from './clientes/cliente.service';
 import { HttpClientModule } from '@angular/common/http';
 import { MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { AppRoutingModule } from './app-routing.module';
+import { LoginComponent } from './auth/login/login.component';
+import { SignupComponent } from './auth/signup/signup.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ClienteInserirComponent,
     CabecalhoComponent,
-    ClienteListaComponent
+    ClienteListaComponent,
+    LoginComponent,
+    SignupComponent
   ],
   imports: [
     AppRoutingModule,
@@ -35,7 +40,9 @@ import { AppRoutingModule } from './app-routing.module';
     MatToolbarModule,
     MatExpansionModule,
     HttpClientModule,
-    MatProgressSpinnerModule
+    FormsModule,
+    MatProgressSpinnerModule,
+    MatPaginatorModule
   ],
   providers: [ClienteService],
   bootstrap: [AppComponent]

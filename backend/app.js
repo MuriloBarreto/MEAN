@@ -5,6 +5,7 @@ const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
 const clienteRoutes = require('./rotas/clientes');
+const usuarioRoutes = require ('./rotas/usuarios');
 app.use(cors());
 app.use(express.json());
 app.use('/imagens', express.static(path.join("backend/imagens")));
@@ -36,5 +37,6 @@ mongoose
 // })
 
 app.use ('/api/clientes', clienteRoutes);
+app.use ('/api/usuario', usuarioRoutes);
 
 module.exports = app;
