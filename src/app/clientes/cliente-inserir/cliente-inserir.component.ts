@@ -60,7 +60,8 @@ export class ClienteInserirComponent implements OnInit {
             nome: this.cliente.nome,
             fone: this.cliente.fone,
             email:this.cliente.email,
-            imagem: this.cliente.imagemURL
+            imagem: this.cliente.imagemURL,
+            criador: dadosCli.criador
           })
         });
       }

@@ -15,27 +15,28 @@ export class ClienteService {
   }
 
   getClientes(pageSize: number, page: number): void {
-      this.httpClient.get <{mensagem: string, clientes: any, maxClientes: number}>(`http://localhost:3000/api/clientes?pageSize=${pageSize}&page=${page}`)
+      this.httpClient.get <{mensagem: string, clientes: any, maxClientes: number}>
+      (`http://localhost:3000/api/clientes?pageSize=${pageSize}&page=${page}`)
         .pipe(map((dados) => {
-          return{ clientes: dados.clientes.map((cliente:any) => {
-            return {
-              id: cliente._id,
-              nome: cliente.nome,
-              fone: cliente.fone,
-              email: cliente.email,
-              imagemURL: cliente.imagemURL
-            }
-          }),
-          maxClientes: dados.maxClientes
-        }
+          return {
+              clientes: dados.clientes.map((cliente:any) => {
+              return {
+                id: cliente._id,
+                nome: cliente.nome,
+                fone: cliente.fone,
+                email: cliente.email,
+                imagemURL: cliente.imagemURL,
+                criador: cliente.criador
+              }
+            }),
+            maxClientes: dados.maxClientes
+          }
         }))
         .subscribe(
           (dados) => {
+            console.log(dados.clientes);
             this.clientes = dados.clientes;
-            this.listaClientesAtualizada.next({
-              clientes: [...this.clientes],
-              maxClientes: dados.maxClientes
-            });
+            this.listaClientesAtualizada.next({clientes: [...this.clientes], maxClientes: dados.maxClientes});
           }
         )
   }
@@ -60,18 +61,17 @@ export class ClienteService {
     this.httpClient.post<{mensagem: string, cliente: Cliente}>('http://localhost:3000/api/clientes',
       dadosCliente).subscribe(
         (dados) => {
-          /*cliente.id = dados.id;*/
           this.router.navigate(['/']);
         }
       )
   }
 
-  removerCliente (id: string){
-    return this.httpClient.delete(`http://localhost:3000/api/clientes/${id}`)
+  removerCliente (id: string): any{
+    return this.httpClient.delete(`http://localhost:3000/api/clientes/${id}`);
   }
   getCliente (idCliente: any){
     //return{...this.clientes.find((cli) => cli.id === idCliente)}
-    return this.httpClient.get<{_id: string, nome: string, fone: string, email:string, imagemURL:string}>
+    return this.httpClient.get<{_id: string, nome: string, fone: string, email:string, imagemURL:string, criador:string}>
     (`http://localhost:3000/api/clientes/${idCliente}`);
   }
 
@@ -92,7 +92,8 @@ export class ClienteService {
         nome: nome,
         fone: fone,
         email: email,
-        imagemURL: imagem
+        imagemURL: imagem,
+        criador: null,
       }
     }
     console.log(typeof(clienteData));

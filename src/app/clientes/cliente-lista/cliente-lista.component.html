@@ -7,15 +7,20 @@
     </div>
     <p>Fone: {{cliente.fone}}</p>
     <p>Email: {{cliente.email}}</p>
-    <mat-action-row>
+    <mat-action-row *ngIf="autenticado && idUsuario == cliente.criador">
       <button mat-button color="primary" [routerLink]="['/editar', cliente.id]">EDITAR</button>
       <button mat-button color="warn" (click)="onDelete(cliente.id)">REMOVER</button>
     </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
-<mat-paginator *ngIf="clientes.length > 0" [length]="totalDeClientes" [pageSize]="totalDeClientesPorPagina"
-[pageSizeOptions]="opcoesTotalDeClientesPorPagina"
-(page)="onPaginaAlterada($event)"></mat-paginator>
+<mat-paginator
+  *ngIf="clientes.length > 0"
+  [length]="totalDeClientes"
+  [pageSize]="totalDeClientesPorPagina"
+  [pageSizeOptions]="opcoesTotalDeClientesPorPagina"
+  (page)="onPaginaAlterada($event)"
+>
+</mat-paginator>
 <p class="mat-body-1" style="text-align: center;" *ngIf="clientes.length <= 0 && !estaCarregando">
   Nenhum Cliente Cadastrado
 </p>

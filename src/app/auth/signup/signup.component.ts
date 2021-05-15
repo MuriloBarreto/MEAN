@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { UsuarioService } from '../usuario.service';
 
 @Component({
@@ -7,16 +8,26 @@ import { UsuarioService } from '../usuario.service';
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
 })
-export class SignupComponent implements OnInit {
-  estaCarregando: boolean = false;
+export class SignupComponent implements OnInit, OnDestroy {
 
-  onSignup(form: NgForm){
-    if(form.invalid) return;
-    this.usuarioService.criarUsuario(form.value.email, form.value.password);
-  }
+  estaCarregando: boolean = false;
+  private authObserver: Subscription;
   constructor(private usuarioService: UsuarioService) { }
 
   ngOnInit(): void {
+    this.authObserver = this.usuarioService.getStatusSubject()
+    .subscribe(
+    authStatus => this.estaCarregando = false
+    )
+  }
+
+  ngOnDestroy (): void{
+    this.authObserver.unsubscribe();
+  }
+
+  onSignup(form: NgForm): void {
+    if (form.invalid) return;
+    this.usuarioService.criarUsuario(form.value.email, form.value.password);
   }
 
 }

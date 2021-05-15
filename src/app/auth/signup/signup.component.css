@@ -1,6 +1,6 @@
-mat-form-field {
+mat-form-field, input {
   width: 100%;
 }
-mat-spinner {
+mat-spinner{
   margin: auto;
 }
